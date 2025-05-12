@@ -34,8 +34,8 @@ setOpenSection((prev)=>(
   {...prev,
     [index]: !prev[index],
   }
-))
-} 
+));
+}; 
 
   return courseData ? (
     <>
@@ -112,6 +112,7 @@ justify-between md:px-36 px-8 md:pt-30 pt-20 text-left'>
             </div>
           ))}
         </div>
+
       </div>
 
       <div className='py-20 text-sm md:text-default'>
