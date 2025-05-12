@@ -6,6 +6,7 @@ import  Loading  from '../../components/student/Loading'
 import humanizeDuration from 'humanize-duration'
 import Footer from '../../components/student/Footer'
 import Youtube from 'react-youtube'
+import Rating from '../../components/student/Rating'
 
 const CourseDetails = () => {
 
@@ -105,7 +106,6 @@ justify-between md:px-36 px-8 md:pt-30 pt-20 text-left'>
 
       </div>
 
-
 </div>
 {/* colonne de droite */}
 <div className='max-w-[424px] z-10 rounded-t md:
@@ -143,7 +143,14 @@ rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px]'>
         <p>{calculateNoOfLecture(courseData)} leçons</p>
       </div>
 
+      
+
     </div>
+
+    <div className='flex flex items-center gap-2 py-3 mt-10'>
+        <h1 className='text-xl font-bold'>Noter ce cours :</h1>
+        <Rating initialRating={0}/>
+      </div>
 
   
     
