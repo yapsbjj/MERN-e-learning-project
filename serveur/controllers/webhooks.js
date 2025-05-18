@@ -1,4 +1,4 @@
-import { Webhook } from 'svix';
+import { webhook } from 'svix';
 import User from '../models/User.js';
 
 //Fonction pour gerer les users Clerk dans la base de données
