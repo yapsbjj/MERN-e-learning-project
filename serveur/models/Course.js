@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const lectureSchema = new mongoose.Schema({
 
-    lectureId: {type: String, required: true },
+    lectureId: { type: String, required: true },
     lectureTitle: { type: String, required: true },
     lectureDuration: { type: Number, required: true },
     lectureUrl: { type: String, required: true },
@@ -14,6 +14,7 @@ const chapterSchema = new mongoose.Schema({
 
     chapterId: { type: String, required: true },
     chapterOrder: { type: Number, required: true},
+    chapterTitle: { type: String, required: true },
     chapterContent: [lectureSchema]
 }, {_id: false});
 

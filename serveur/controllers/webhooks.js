@@ -4,110 +4,121 @@ import Stripe from 'stripe';
 import Purchase from '../models/Purchase.js';
 import Course from '../models/Course.js';
 
-//Fonction pour gerer les users Clerk dans la base de données
+// Gérer les webhooks de Clerk
+export const clerkWebhooks = async (req, res) => {
+  try {
+    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
-export const clerkWebhooks = async (req, res)=>{
-    try {
-        const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
+    await whook.verify(JSON.stringify(req.body), {
+      'svix-id': req.headers['svix-id'],
+      'svix-timestamp': req.headers['svix-timestamp'],
+      'svix-signature': req.headers['svix-signature'],
+    });
 
-        await whook.verify(JSON.stringify(req.body), {
-        "svix-id": req.headers["svix-id"],
-        "svix-timestamp": req.headers[ "svix-timestamp"],
-        "svix-signature": req.headers["svix-signature"]
-    })
-
-    const {data, type} = req.body
+    const { data, type } = req.body;
 
     switch (type) {
-        case 'user.created': {
-            const userData = {
-                _id: data.id,
-                email: data.email_addresses[0].email_address,
-                name: data.first_name + " " + data.last_name,
-                imageUrl: data.image_url,
-            }
-            await User.create(userData)
-            res.json({})
-            break;
-        }
+      case 'user.created': {
+        const userData = {
+          _id: data.id,
+          email: data.email_addresses[0].email_address,
+          name: `${data.first_name} ${data.last_name}`,
+          imageUrl: data.image_url,
+        };
+        await User.create(userData);
+        return res.json({});
+      }
 
-        case 'user.updated': {
-              const userData = {
-                email: data.email_addresses[0].email_address,
-                name: data.first_name + " " + data.last_name,
-                imageUrl: data.image_url,
-            }
-            await User.findByIdAndUpdate(data.id, userData)
-            res.json({})
-            break;
-        }
+      case 'user.updated': {
+        const userData = {
+          email: data.email_addresses[0].email_address,
+          name: `${data.first_name} ${data.last_name}`,
+          imageUrl: data.image_url,
+        };
+        await User.findByIdAndUpdate(data.id, userData);
+        return res.json({});
+      }
 
-        case 'user.deleted' : {
-            await User.findByIdAndDelete(data.id)
-            res.json({})
-            break;
-        }
+      case 'user.deleted': {
+        await User.findByIdAndDelete(data.id);
+        return res.json({});
+      }
 
-            
-
-    } 
-    } catch (error) {
-        res.json({success: false, message: error.message})   
+      default:
+        return res.status(400).json({ success: false, message: 'Type de webhook non géré' });
     }
-}
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
 
- const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY) 
+const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
 
- export const stripeWebhooks = async(req, res)=>{
-    const sig = request.headers['stripe-signature'];
-
+export const stripeWebhooks = async (req, res) => {
+  const sig = req.headers['stripe-signature'];
   let event;
 
   try {
-    event = Stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  }
-  catch (err) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
+    event = Stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-    // Handle the event
+  // Gérer les événements Stripe
   switch (event.type) {
-    case 'payment_intent.succeeded':{
+    case 'payment_intent.succeeded': {
       const paymentIntent = event.data.object;
       const paymentIntentId = paymentIntent.id;
 
       const session = await stripeInstance.checkout.sessions.list({
-        payment_intent: paymentIntentId
-      }) 
+        payment_intent: paymentIntentId,
+      });
 
       const { purchaseId } = session.data[0].metadata;
 
-      const purchaseData = await Purchase.findById(purchaseId)
-      const userData = await User.findById(purchaseData.userId)
-      const courseData = await Course.findbyId(purchaseData.courseId.toString())
+      const purchaseData = await Purchase.findById(purchaseId);
+      const userData = await User.findById(purchaseData.userId);
+      const courseData = await Course.findById(purchaseData.courseId.toString());
 
-      courseData.enrolledStudents.push(userData)
-      await courseData.save()
-      
-      userData.enrolledCourses.push(courseData._id)
-      await userData.save()
+      courseData.enrolledStudents.push(userData._id);
+      await courseData.save();
 
-      purchaseData.status = 'completed'
-      await purchaseData.save()
+      userData.enrolledCourses.push(courseData._id);
+      await userData.save();
+
+      purchaseData.status = 'completed';
+      await purchaseData.save();
 
       break;
     }
-    case 'payment_method.attached':
-      const paymentMethod = event.data.object;
-      console.log('PaymentMethod was attached to a Customer!');
-      break;}
-    // ... handle other event types
-    default:
+
+    case 'payment_intent.payment_failed': {
+      const paymentIntent = event.data.object;
+      const paymentIntentId = paymentIntent.id;
+
+      const session = await stripeInstance.checkout.sessions.list({
+        payment_intent: paymentIntentId,
+      });
+
+      const { purchaseId } = session.data[0].metadata;
+      const purchaseData = await Purchase.findById(purchaseId);
+
+      purchaseData.status = 'failed';
+      await purchaseData.save();
+
+      break;
+    }
+
+    default: {
       console.log(`Unhandled event type ${event.type}`);
+      break;
+    }
   }
 
-  // Return a response to acknowledge receipt of the event
-  response.json({received: true});
-
- } 
-
+  // Répondre à Stripe
+  res.json({ received: true });
+};

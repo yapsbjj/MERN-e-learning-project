@@ -1,6 +1,6 @@
 import { clerkClient } from '@clerk/express'
 
-// Middleware pour proteger les routes des professeurs
+// Middleware to protect educator routes
 export const protectEducator = async (req, res, next)=>{
     try {
         const userId = req.auth.userId

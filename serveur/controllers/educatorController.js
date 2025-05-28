@@ -2,7 +2,7 @@ import  { clerkClient } from '@clerk/express'
 import Course from '../models/Course.js'
 import { v2 as cloudinary } from 'cloudinary'
 
-//changer le role en profeseur
+//update role to educator
 export const updateRoleEducator = async (req, res) =>{
     try {
         const userId = req.auth.userId
@@ -20,7 +20,7 @@ export const updateRoleEducator = async (req, res) =>{
     }
 }
 
-// Ajouter un nouveau cours
+// Add new course
 
 export const addCourse = async (req, res)=>{
     try {
@@ -33,6 +33,8 @@ export const addCourse = async (req, res)=>{
        }
 
        const parsedCourseData = await JSON.parse(courseData)
+
+       console.log("Cours reçu :", parsedCourseData);
        parsedCourseData.educator = educatorId
        const newCourse = await Course.create(parsedCourseData)
        const imageUpload = await cloudinary.uploader.upload(imageFile.path)
