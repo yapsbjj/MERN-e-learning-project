@@ -6,6 +6,7 @@ import  Loading  from '../../components/student/Loading'
 import humanizeDuration from 'humanize-duration'
 import Footer from '../../components/student/Footer'
 import Youtube from 'react-youtube'
+import { toast } from 'react-toastify'
 
 const CourseDetails = () => {
 
@@ -17,17 +18,60 @@ const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false)
 const [playerData, setPlayerData] = useState(null)
 
 const {allCourses, calculateRating, calculateNoOfLecture,
-  calculateCourseDuration, calculateChapterTime, currency
+  calculateCourseDuration, calculateChapterTime, currency, backendUrl, userData, getToken
 } = useContext(AppContext)
 
 const fetchCourseData = async ()=>{
- const findCourse = allCourses.find(course => course._id === id)
- setCourseData(findCourse);
+  try {
+    const {data} = await axios.get(backendUrl + '/api/course/' + id)
+
+    if(data.success){
+      setCourseData(data.courseData)
+    }else{
+      toast.error(data.message)
+    }
+  } catch (error) {
+    toast.error(error.message)
+  }
+
+}
+
+const enrollCourse = async ()=>{
+  try {
+    if(!userData){
+      return toast.warn('Vous devez vous connecter pour vous inscrire !')
+    }
+    if(isAlreadyEnrolled){
+      return toast.warn('Vous êtes déjà inscrit')
+    }
+
+    const token = await getToken();
+
+    const {data} = await axios.post(backendUrl + '/api/user/purchase', {courseId: courseData._id},
+      {headers: { Authorization: `Bearer ${token}`}}
+    )
+
+    if(data.success){
+      const {session_url} = data
+      window.location.replace(session_url)
+    }else{
+      toast.error(data.message)
+    }
+
+  } catch (error) {
+    toast.error(error.message)
+  }
 }
 
 useEffect(()=>{
   fetchCourseData()
-},[allCourses])
+},[])
+
+useEffect(()=>{
+  if(userData && courseData){
+    setIsAlreadyEnrolled(userData.enrolledCourses.includes(courseData._id))
+  }
+},[userData, courseData])
 
 const toggleSection = (index)=>{
 setOpenSection((prev)=>(
@@ -47,7 +91,7 @@ justify-between md:px-36 px-8 md:pt-30 pt-20 text-left'>
 
   </div>
       
-{/* colonne de gauche */}
+{/* left column */}
 <div className='max-w-xl z-10 text-gray-500'>
     <h1 className='font-semibold text-gray-800'>{courseData.courseTitle}</h1>
     <p className='pt-4 md:text-base text-sm' 
@@ -70,7 +114,7 @@ justify-between md:px-36 px-8 md:pt-30 pt-20 text-left'>
                     <p>{courseData.enrolledStudents.length} {courseData.enrolledStudents.length > 1 ? 'étudiants': 'étudiant'}</p>
       </div>
 
-      <p className='text-sm'>Ce cours vous est proposé par <span className='text-blue-600 underline'>Yaps</span></p>
+      <p className='text-sm'>Ce cours vous est proposé par <span className='text-blue-600 underline'>{courseData.educator.name}</span></p>
 
       <div className='pt-8 text-gray-800'>
         <h2 className='text-xl font-semibold'>Course Structure</h2>
@@ -124,11 +168,11 @@ justify-between md:px-36 px-8 md:pt-30 pt-20 text-left'>
 
 
 </div>
-{/* colonne de droite */}
+{/* right column */}
 <div className='max-w-[424px] z-10 rounded-t md:
 rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px]'>
 
-{/* Remplacer l'image par la vidéo */}
+{/* Remplace Thumbnail by the video */}
 {
   playerData ?
   <Youtube videoId={playerData.videoId} opts={{playerVars: {autoplay: 1}}} iframeClassName='w-full aspect-video'/>
@@ -142,7 +186,7 @@ rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px]'>
       <p className='text-red-500'><span className='font-medium'>5 jours</span> restant pour la promotion !</p>
     </div>
 
-    {/* prix du cours */} 
+    {/* Course price */} 
     <div className='flex gap-3 items-center pt-2'>
           <p className='text-gray-800 md:text-4xl text 2xl font-semibold'>{(courseData.coursePrice - courseData.discount *
             courseData.coursePrice / 100).toFixed(2)} {currency}</p>
@@ -174,7 +218,7 @@ rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px]'>
 
     </div>
 
-    <button className='md:mt-6 mt-4 w-full py-3 rounded bg-blue-600
+    <button onClick={enrollCourse} className='md:mt-6 mt-4 w-full py-3 rounded bg-blue-600
     text-white font-medium'
     >{isAlreadyEnrolled ? 'already Enrolled' : 'Enroll Now' }</button>
     
