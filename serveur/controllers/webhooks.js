@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 import Purchase from '../models/Purchase.js';
 import Course from '../models/Course.js';
 
-// Gérer les webhooks de Clerk
+// API Controller Function to manage Clerk User with database
 export const clerkWebhooks = async (req, res) => {
   try {
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
@@ -26,7 +26,8 @@ export const clerkWebhooks = async (req, res) => {
           imageUrl: data.image_url,
         };
         await User.create(userData);
-        return res.json({});
+        res.json({})
+        break;
       }
 
       case 'user.updated': {
@@ -36,19 +37,21 @@ export const clerkWebhooks = async (req, res) => {
           imageUrl: data.image_url,
         };
         await User.findByIdAndUpdate(data.id, userData);
-        return res.json({});
+        return res.json({})
+        break;
       }
 
       case 'user.deleted': {
         await User.findByIdAndDelete(data.id);
-        return res.json({});
+        return res.json({})
+        break;
       }
 
       default:
         return res.status(400).json({ success: false, message: 'Type de webhook non géré' });
     }
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
