@@ -125,6 +125,16 @@ useEffect(()=>{
     
 },[])
 
+const logToken = async ()=>{
+    console.log(await getToken());
+}
+
+useEffect(()=>{
+    if(user){
+        logToken()
+    }
+}, [user])
+
 
 
 useEffect(()=>{
@@ -137,7 +147,7 @@ useEffect(()=>{
 
     const value = {
         currency, allCourses, navigate, calculateRating, isEducator, setIsEducator,calculateNoOfLecture,
-        calculateCourseDuration, calculateChapterTime, enrolledCourses, fetchUserEnrolledCourses,
+        calculateCourseDuration, calculateChapterTime, enrolledCourses, setEnrolledCourses, setAllCourses, fetchUserEnrolledCourses,
         backendUrl, userData, setUserData, getToken, fetchAllCourses
     }
 
