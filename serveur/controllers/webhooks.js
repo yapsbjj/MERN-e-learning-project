@@ -7,6 +7,9 @@ import Course from '../models/Course.js';
 // API Controller Function to manage Clerk User with database
 export const clerkWebhooks = async (req, res) => {
   try {
+
+    console.log("🔔 Webhook reçu :", req.body);
+
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
     await whook.verify(JSON.stringify(req.body), {
@@ -15,6 +18,8 @@ export const clerkWebhooks = async (req, res) => {
       'svix-signature': req.headers['svix-signature'],
     });
 
+    
+
     const { data, type } = req.body;
 
     switch (type) {
@@ -22,7 +27,7 @@ export const clerkWebhooks = async (req, res) => {
         const userData = {
           _id: data.id,
           email: data.email_addresses[0].email_address,
-          name: `${data.first_name} ${data.last_name}`,
+          name: data.first_name + " " + data.last_name,
           imageUrl: data.image_url,
         };
         await User.create(userData);
@@ -33,7 +38,7 @@ export const clerkWebhooks = async (req, res) => {
       case 'user.updated': {
         const userData = {
           email: data.email_addresses[0].email_address,
-          name: `${data.first_name} ${data.last_name}`,
+          name: data.first_name + " " + data.last_name,
           imageUrl: data.image_url,
         };
         await User.findByIdAndUpdate(data.id, userData);

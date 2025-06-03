@@ -7,6 +7,7 @@ import humanizeDuration from 'humanize-duration'
 import Footer from '../../components/student/Footer'
 import Youtube from 'react-youtube'
 import { toast } from 'react-toastify'
+import axios from 'axios'
 
 const CourseDetails = () => {
 
@@ -114,7 +115,7 @@ justify-between md:px-36 px-8 md:pt-30 pt-20 text-left'>
                     <p>{courseData.enrolledStudents.length} {courseData.enrolledStudents.length > 1 ? 'étudiants': 'étudiant'}</p>
       </div>
 
-      <p className='text-sm'>Ce cours vous est proposé par <span className='text-blue-600 underline'>{courseData.educator.name}</span></p>
+      <p className='text-sm'>Ce cours vous est proposé par <span className='text-blue-600 underline'>{courseData.educator?.name}</span></p>
 
       <div className='pt-8 text-gray-800'>
         <h2 className='text-xl font-semibold'>Course Structure</h2>
