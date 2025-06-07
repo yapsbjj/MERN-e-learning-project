@@ -1,24 +1,9 @@
 import  { clerkClient } from '@clerk/express'
 import Course from '../models/Course.js'
 import { v2 as cloudinary } from 'cloudinary'
+import User from '../models/User.js'
 
- {/*export const becomeEducator = async (req, res) => {
-  try {
-    const userId = req.auth.userId;
-
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
-
-    user.isEducator = true;
-    await user.save();
-
-    res.json({ success: true, message: "Vous êtes maintenant enseignant" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};*/}
-
-
+ 
 //update role to educator via Clerk
 export const updateRoleEducator = async (req, res) =>{
     try {
@@ -26,7 +11,7 @@ export const updateRoleEducator = async (req, res) =>{
 
         await clerkClient.users.updateUserMetadata(userId, {
             publicMetaData:{
-                role: 'educator',
+                "role": "educator",
             }
         })
 

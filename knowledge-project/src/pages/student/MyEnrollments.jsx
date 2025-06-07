@@ -2,28 +2,37 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
 import{ Line } from 'rc-progress'
 import Footer from '../../components/student/Footer'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+
 
 const MyEnrollments = () => {
 
-const {enrolledCourses, calculateCourseDuration, navigate, userData, fetchUserEnrolledCourses, backendUrl, getToken, calculateNoOfLectures} = useContext(AppContext)
+const {enrolledCourses, calculateCourseDuration, navigate, userData, 
+  fetchUserEnrolledCourses, backendUrl, getToken, calculateNoOfLecture} = useContext(AppContext)
 
 const [progressArray, setProgressArray] = useState([])
 
 const getCourseProgress = async ()=>{
   try {
     const token = await getToken();
-    const tempProgressArray = await Promise.all
-      enrolledCourses.map(async (course) =>{
-        const {data} = await axios.post(`${backendUrl}/api/user/get-course-progress`, {courseId: course._id}, {
-          headers: {Authorization: `Bearer ${token} `}
-        })
-        let totalLectures = calculateNoOfLectures(course);
-    
-    const lectureCompleted = data.progressData ? data.progressData.
-    lectureCompleted.length : 0;
-    return {totalLectures, lectureCompleted}
-      }
-    )
+
+    const tempProgressArray = await Promise.all(
+  enrolledCourses.map(async (course) => {
+    const { data } = await axios.post(
+      `${backendUrl}/api/user/get-course-progress`,
+      { courseId: course._id },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const totalLectures = calculateNoOfLecture(course);
+    const lectureCompleted = data.progressData
+      ? data.progressData.lectureCompleted.length
+      : 0;
+
+    return { totalLectures, lectureCompleted };
+  })
+);
     setProgressArray(tempProgressArray);
 
     
@@ -49,7 +58,7 @@ useEffect(()=>{
     <>
     <div className='px-4 py-3 px-8 pt-10'>
       
-      <h1 className='text-2xl font-semibold'>My Enrollments</h1>
+      <h1 className='text-2xl font-semibold'>Mes Cours</h1>
       <table className='md:table-auto table-fixed w-full overflow-hidden border mt-10'>
         <thead className='text-gray-900  border-gray-500/20 text-sm text-left max-sm:hidden'>
           <tr>
