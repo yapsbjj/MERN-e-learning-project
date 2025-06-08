@@ -17,7 +17,7 @@ const AddCourse = () => {
   const [discount, setDiscount] = useState(0)
   const [image, setImage] = useState(null)
   const [chapters, setChapters] = useState([])
-  const [showPopup, setShowPopup] = useState('false');
+  const [showPopup, setShowPopup] = useState(false);
   const [currentChapterId, setCurrentChapterId] = useState(null);
 
    const [lectureDetails, setLectureDetails] = useState(
@@ -53,7 +53,7 @@ const AddCourse = () => {
     }
    }
 
-   //ouvrir le lien PopUp lorsqu'on clique sur +add lecture
+   //open the Pop up link in add Lecture
    const handleLecture = (action, chapterId, lectureIndex) => {
     if(action === 'add') {
       setCurrentChapterId(chapterId);
@@ -139,7 +139,7 @@ const AddCourse = () => {
     };
    
 
-   // initier Quill juste une fois
+   // initiate Quill once
    useEffect(() => {
     if(!quillRef.current && editorRef.current) {
       quillRef.current = new Quill(editorRef.current, {
@@ -180,7 +180,7 @@ const AddCourse = () => {
           </div>
 
           <div className='flex md:flex-row flex-col items-center gap-3'>
-            <p>Télécharger</p>
+            <p>Télécharger l'image</p>
 
             <label htmlFor="thumbnailImage" className='flex items-center gap-3'>
               <img src={assets.file_upload_icon} alt="upload icon"
@@ -202,7 +202,7 @@ const AddCourse = () => {
           className='outline-none md:py-2.5 py-2 w-28 px-3 rounded border border-gray-500' required />
         </div>
 
-        {/* Pour ajouter des chapitres*/}
+        {/* Add chapters*/}
         <div>
           {chapters.map((chapter, chapterIndex) =>(
             <div key={chapterIndex} 
@@ -231,7 +231,7 @@ const AddCourse = () => {
                   {chapter.chapterContent.map((lecture, lectureIndex) =>(
                     <div key={lectureIndex} className='flex justify-between
                     items-center mb-2'>
-                      <span>{lectureIndex+ 1}{lecture.lecureTitle} - {lecture.lectureDuration} mins - <a href={lecture.lectureUrl} target='_blank
+                      <span>{lectureIndex+ 1}{lecture.lectureTitle} - {lecture.lectureDuration} mins - <a href={lecture.lectureUrl} target='_blank
                       ' className='text-blue-500'>Link</a>
                       -{lecture.isPreviewFree ? 'Prévisualiser gratuitement' : 'Payer'}</span>
                       <img src={assets.cross_icon} alt="cross icon" onClick={() => handleLecture('remove', chapter.chapterId, lectureIndex)} 
@@ -242,7 +242,7 @@ const AddCourse = () => {
 
                     <div className='inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2' onClick={() => handleLecture('add',
                       chapter.chapterId)}>
-                    + Add lecture  
+                    + Ajouter une vidéo 
                     </div>
 
                 </div>

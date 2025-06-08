@@ -73,7 +73,7 @@ const MyCourses = () => {
                       </td>
 
                       <td className='px-4 py-3'>
-                        {new Date(course.createAt).toLocaleDateString()}
+                        {new Date(course.createdAt).toLocaleDateString()}
                       </td>
 
                   </tr>
