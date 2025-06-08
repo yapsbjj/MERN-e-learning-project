@@ -52,7 +52,7 @@ export const addCourse = async (req, res)=>{
     }
 }
 
-//Voir les cours des professeurs (GET)
+//Get educator courses
 export const getEducatorCourses = async (req, res)=>{
     try {
         const educator = req.auth.userId
@@ -64,7 +64,7 @@ export const getEducatorCourses = async (req, res)=>{
     }
 }
 
-//Voir toutes les données des professeurs dans le dashboard ( le compte actuel, le nombre d'étudiants, le nombres de cours)
+//get data dashboard ( total students, total earning,total courses)
 export const educatorDashboardData = async (req, res)=>{
     try {
         const educator = req.auth.userId;
@@ -73,15 +73,15 @@ export const educatorDashboardData = async (req, res)=>{
 
         const courseIds = courses.map(course => course._id)
 
-        // Calculer le montant total gagné des cours vendu
+        // Calculate total earning
         const purchases = await Purchase.find({
             courseId: {$in: courseIds},
             status: 'completed'
         });
 
-        const totalEarnings = purchases.reduce((sum, Purchase)=> sum + purchases.amount, 0);
+        const totalEarnings = purchases.reduce((sum, purchase)=> sum + purchase.amount, 0);
         
-        //Récuperer les id d'etudiants deja inscrit via le titre des cours
+        //fetch id students by courses
         const enrolledStudentsData = [];
         for(const course of courses){
             const students = await User.find({
@@ -104,7 +104,7 @@ export const educatorDashboardData = async (req, res)=>{
     }    
 }
 
-//Recupérer les data des étudiants avec leur achats
+//Fetch data students ans earnings
 export const getEnrolledStudentsData = async (req, res)=>{
     try {
         const educator = req.auth.userId;

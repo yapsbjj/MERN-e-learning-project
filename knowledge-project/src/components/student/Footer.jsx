@@ -9,21 +9,22 @@ const Footer = () => {
       border-white/30'>
           <div className='flex flex-col md:items-start items-center w-full'>
           <img src={logo} alt="logo-Knowledge" />
-          <p className='mt-6 text-center md:text-left text-sm text-white/80'>text description</p>
+          <p className='mt-6 text-center md:text-left text-sm text-white/80'>La société éditrice Knowledge propose aussi des formations sous forme de livres ou de kits dans les domaines de la
+musique, de l’informatique ou du jardinage</p>
           </div>
 
           <div className='flex flex-col md:items-start items-center w-full'>
-          <h2 className='font-semibold text-white mb-5'>Compagny</h2>
+          <h2 className='font-semibold text-white mb-5'>Menu</h2>
           <ul className='flex md:flex-col w-full justify-between text-sm text-white/80 md:space-y-2'>
-            <li><a href="#">Acceuil</a></li>
+            <li><a href="#">Accueil</a></li>
             <li><a href="#">A propos de nous</a></li>
-            <li><a href="#">Conctact</a></li>
+            <li><a href="#">Contact</a></li>
             <li><a href="#">politique de confidentialité</a></li>
             </ul>
           </div>
 
           <div className='hidden md:flex flex-col items-start w-full'>
-            <h2 className='font-semibold text-white mb-5'>Inscivez vous a notre newsletter</h2>
+            <h2 className='font-semibold text-white mb-5'>Inscrivez vous a notre newsletter</h2>
             <p className='text-sm text-white/80'>Recever nos dernières actualités, cours et nos ressources directement chez vous !</p>
             <div className='flex items-center gap-2 pt-4'>
               <input type="email" placeholder='Entrez votre email'
