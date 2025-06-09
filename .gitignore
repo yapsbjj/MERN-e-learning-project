@@ -1,2 +1,4 @@
-node_momdules
+
 .env
+node_modules/
+dist/
