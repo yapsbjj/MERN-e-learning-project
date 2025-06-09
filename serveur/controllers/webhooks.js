@@ -76,7 +76,7 @@ export const stripeWebhooks = async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Gérer les événements Stripe
+  // Manage Stripe event
   switch (event.type) {
     case 'payment_intent.succeeded': {
       const paymentIntent = event.data.object;
@@ -127,6 +127,6 @@ export const stripeWebhooks = async (req, res) => {
     }
   }
 
-  // Répondre à Stripe
+  // Stripe response
   res.json({ received: true });
 };

@@ -16,7 +16,7 @@ musique, de l’informatique ou du jardinage</p>
           <div className='flex flex-col md:items-start items-center w-full'>
           <h2 className='font-semibold text-white mb-5'>Menu</h2>
           <ul className='flex md:flex-col w-full justify-between text-sm text-white/80 md:space-y-2'>
-            <li><a href="#">Accueil</a></li>
+            <li><a href="/">Accueil</a></li>
             <li><a href="#">A propos de nous</a></li>
             <li><a href="#">Contact</a></li>
             <li><a href="#">politique de confidentialité</a></li>
