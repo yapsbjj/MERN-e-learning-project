@@ -115,7 +115,7 @@ justify-between md:px-36 px-8 md:pt-30 pt-20 text-left'>
                     <p>{courseData.enrolledStudents.length} {courseData.enrolledStudents.length > 1 ? 'étudiants': 'étudiant'}</p>
       </div>
 
-      <p className='text-sm'>Ce cours vous est proposé par <span className='text-blue-600 underline'>{courseData.educator?.name}</span></p>
+      <p className='text-sm'>Ce cours vous est proposé par <span className='text-blue-600 underline'>Knowledge Team</span></p>
 
       <div className='pt-8 text-gray-800'>
         <h2 className='text-xl font-semibold'>Course Structure</h2>
@@ -221,7 +221,7 @@ rounded-none overflow-hidden bg-white min-w-[300px] sm:min-w-[420px]'>
 
     <button onClick={enrollCourse} className='md:mt-6 mt-4 w-full py-3 rounded bg-blue-600
     text-white font-medium'
-    >{isAlreadyEnrolled ? 'already Enrolled' : 'Enroll Now' }</button>
+    >{isAlreadyEnrolled ? 'Déja inscrit' : 'Acheter maintenant' }</button>
     
     <div className='pt-6'>
       <p className='md:text-xl text-lg font-medium text-gray-800'>Qui ya t'il dans ce cours ?</p>
