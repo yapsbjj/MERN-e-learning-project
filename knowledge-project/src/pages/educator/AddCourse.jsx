@@ -120,7 +120,7 @@ const AddCourse = () => {
         const {data} = await axios.post(backendUrl + '/api/educator/add-course',
            formData, { headers: { Authorization: `Bearer ${token}`}})
 
-           if(data.succes){
+           if(data.success){
             toast.success(data.message)
             setCourseTitle('')
             setCoursePrice(0)
