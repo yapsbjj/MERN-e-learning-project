@@ -51,11 +51,3 @@ npm run dev
 - `frontend/` : React 19, pages pour étudiants et éducateurs
 - `vercel.json` : configuration déploiement API
 
-## 📝 Auteurs et crédits
-
-Projet réalisé dans le cadre d’un devoir académique.  
-Technologies utilisées sous licence libre.
-
----
-
-© 2025 – Projet fictif à but pédagogique.
