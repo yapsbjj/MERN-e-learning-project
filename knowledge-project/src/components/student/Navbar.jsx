@@ -1,99 +1,77 @@
-import React, { useContext } from 'react';
-import logo from '../../assets/logo.png';
-import { Link } from 'react-router-dom';
-import { assets } from '../../assets/assets';
-import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
-import { AppContext } from '../../context/AppContext';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useContext, useState } from 'react'
+import { assets } from '../../assets/assets'
+import { AppContext } from '../../context/AppContext'
+import { SignOutButton, useUser, useClerk } from '@clerk/clerk-react'
 
 const Navbar = () => {
-  const { navigate, isEducator, backendUrl, setIsEducator, getToken } = useContext(AppContext);
-  const isCourseListPage = location.pathname.includes('/course-list');
+  const { user } = useUser()
+  const { openSignIn } = useClerk()
+  const { navigate } = useContext(AppContext)
 
-  const { openSignIn } = useClerk();
-  const { user } = useUser();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const becomeEducator = async ()=>{
-    try {
-      if(isEducator){
-        navigate('/educator')
-        return;
-      }
-      const token = await getToken()
-      const { data } = await axios.get(backendUrl + '/api/educator/update-role',
-        {headers: {Authorization: `Bearer ${token}`}})
-
-        if(data.success){
-          setIsEducator(true)
-          toast.success(data.message)
-        }else{
-          toast.error(data.message)
-        }
-    } catch (error) {
-      toast.error(error.message)
-    }
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
   }
 
   return (
-    <div
-      className={`flex items-center justify-between px-4 sm:px-10 
-      md:px-14 lg:px-36 border-b border-gray-500 py-4 ${
-        isCourseListPage ? 'bg-white' : 'bg-cyan-100/70'
-      }`}
-    >
-      <img
-        onClick={() => navigate('/')}
-        src={logo}
-        alt="logo-knowledge"
-        className="w-28 lg:w-32 cursor-pointer"
-      />
+    <nav className='bg-white w-full shadow-sm fixed top-0 left-0 z-50'>
+      <div className='flex justify-between items-center px-4 md:px-10 py-4'>
 
-      <div className="hidden md:flex items-center gap-5 text-gray-500">
-        <div className="flex items-center gap-5">
-          {user && (
-            <>
-              <button onClick={becomeEducator}>
-                {isEducator ? 'Dashboard' : ' '}
-              </button>
-              | <Link to="/my-enrollments">Mes cours</Link>
-            </>
+        {/* Logo */}
+        <img
+          src={assets.logo}
+          alt="logo"
+          className='w-32 cursor-pointer'
+          onClick={() => navigate('/')}
+        />
+
+        {/* Desktop Nav */}
+        <ul className='hidden md:flex gap-6 text-gray-600 font-medium text-sm'>
+          <li className='cursor-pointer hover:text-blue-600' onClick={() => navigate('/')}>Accueil</li>
+          <li className='cursor-pointer hover:text-blue-600' onClick={() => navigate('/course-list')}>Cours</li>
+          <li className='cursor-pointer hover:text-blue-600' onClick={() => navigate('/my-enrollments')}>Mes cours</li>
+        </ul>
+
+        {/* Actions */}
+        <div className='flex items-center gap-4'>
+
+          {/* Icône utilisateur */}
+          {user ? (
+            <div className='flex items-center gap-2'>
+              <img src={user.imageUrl} alt="profile" className='w-8 h-8 rounded-full' />
+              <SignOutButton>
+                <button className='text-sm text-blue-600 font-medium hover:underline'>Se déconnecter</button>
+              </SignOutButton>
+            </div>
+          ) : (
+            <button onClick={() => openSignIn()}>
+              <img src={assets.user_icon} alt="user icon" className='w-6 h-6' />
+            </button>
           )}
+
+          {/* Burger icon mobile */}
+          <img
+            src={assets.menu_icon}
+            alt="menu icon"
+            className='w-6 h-6 cursor-pointer md:hidden'
+            onClick={toggleMobileMenu}
+          />
         </div>
-        {user ? (
-          <UserButton />
-        ) : (
-          <button
-            onClick={() => openSignIn()}
-            className="bg-blue-600 text-white px-5 py-2 rounded-full"
-          >
-            S'inscrire
-          </button>
-        )}
       </div>
 
-      {/* For Phone Screens */}
-      <div className="md:hidden flex items-center gap-2 sm:gap-5 text-gray-500">
-        <div className="flex items-center gap-1 sm:gap-2 max-sm:text-xs">
-          {user && (
-            <>
-              <button onClick={becomeEducator}>
-                {isEducator ? 'Professeur Dashboard' : 'Devenir professeur'}
-              </button>
-              <Link to="/my-enrollments">Mes inscriptions</Link>
-            </>
-          )}
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className='md:hidden px-6 pb-4 bg-white border-t border-gray-200'>
+          <ul className='flex flex-col gap-4 text-gray-600 font-medium text-sm'>
+            <li className='cursor-pointer' onClick={() => { navigate('/'); setMobileMenuOpen(false); }}>Accueil</li>
+            <li className='cursor-pointer' onClick={() => { navigate('/course-list'); setMobileMenuOpen(false); }}>Cours</li>
+            <li className='cursor-pointer' onClick={() => { navigate('/my-enrollments'); setMobileMenuOpen(false); }}>Mes cours</li>
+          </ul>
         </div>
-        {user ? (
-          <UserButton />
-        ) : (
-          <button onClick={() => clerk.openSignIn()}>
-            <img src={assets.user_icon} alt="logo-user-icon" />
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+      )}
+    </nav>
+  )
+}
 
-export default Navbar;
+export default Navbar
